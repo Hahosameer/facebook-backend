@@ -69,6 +69,10 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
 // Server listening
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
