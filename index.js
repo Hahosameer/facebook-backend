@@ -40,12 +40,13 @@ app.use(morgan("common"));
 
 app.use(
   cors({
-    origin: "https://facebook-frontend.vercel.app"
+    origin: ["http://localhost:5173", "https://facebook-frontend.vercel.app"]
  
   })
 );
 
-
+// Allow pre-flight requests
+// File upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images");
