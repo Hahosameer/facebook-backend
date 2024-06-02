@@ -40,7 +40,8 @@ app.use(morgan("common"));
 
 app.use(
   cors({
-    origin: "https://facebook-frontend.vercel.app" 
+    origin: ["http://localhost:5173", "https://facebook-frontend.vercel.app"]
+ 
   })
 );
 
