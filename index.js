@@ -64,10 +64,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   }
 });
 
-
-// Serve uploaded files statically (optional)
-app.use("/public/images", express.static(path.join(__dirname, "public/images")));
-
 // Routes
 app.use("/api/auth", authRoute);
 app.use("/api/posts", postRoute);
