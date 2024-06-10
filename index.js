@@ -59,7 +59,7 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   try {
     return res.status(200).json("File uploaded successfully");
   } catch (error) {
-    console.log(error);
+    console.log("FILE UPLOAD ERROR",error);
     return res.status(500).json({ error: "File upload failed" });
   }
 });
@@ -71,7 +71,7 @@ app.use("/api/users", userRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error(err);
   res.status(500).send("Something went wrong!");
 });
 
