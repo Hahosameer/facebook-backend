@@ -141,17 +141,17 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 
-// app.use(
-//   cors({
-//     origin: ["http://localhost:5173", "https://facebook-frontend.vercel.app"],
-//   })
-// );
-
 app.use(
   cors({
-    origin: "https://facebook-frontend.vercel.app"
+    origin: ["http://localhost:5173", "https://facebook-frontend.vercel.app"],
   })
 );
+
+// app.use(
+//   cors({
+//     origin: "https://facebook-frontend.vercel.app"
+//   })
+// );
 app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
