@@ -47,11 +47,7 @@ app.use(
   })
 );
 
-// app.use(
-//   cors({
-//     origin: "https://facebook-frontend.vercel.app/"
-//   })
-// );
+
 app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
