@@ -1,5 +1,3 @@
-
-
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -48,11 +46,6 @@ app.use(
   })
 );
 
-// app.use(
-//   cors({
-//     origin: "https://facebook-frontend.vercel.app/"
-//   })
-// );
 app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
@@ -91,25 +84,24 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
 
     const result = await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
-              folder: "images"
+      folder: "images",
     });
-    console.log(result.url, "resultresultresultresult");
+    console.log(result.url, "Cloudinary result:", result);
 
     // Delete the file from local storage after uploading to Cloudinary
     fs.unlink(filePath, (err) => {
       if (err) console.error("Failed to delete local file:", err);
     });
-    return res
-      .status(200)
-      .json({ message: "File uploaded successfully", url: result.secure_url });
+
+    return res.status(200).json({
+      message: "File uploaded successfully",
+      url: result.secure_url,
+    });
   } catch (error) {
     console.error("FILE UPLOAD ERROR", error);
     return res.status(500).json({ error: "File upload failed" });
   }
 });
-
-
-
 
 // Routes
 app.use("/api/auth", authRoute);
@@ -131,5 +123,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Backend Server is running on port ${PORT}`);
 });
-
-
