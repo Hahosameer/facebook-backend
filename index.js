@@ -89,9 +89,9 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     console.log(result.url, "Cloudinary result:", result);
 
     // Delete the file from local storage after uploading to Cloudinary
-    fs.unlink(filePath, (err) => {
-      if (err) console.error("Failed to delete local file:", err);
-    });
+    // fs.unlink(filePath, (err) => {
+    //   if (err) console.error("Failed to delete local file:", err);
+    // });
 
     return res.status(200).json({
       message: "File uploaded successfully",
