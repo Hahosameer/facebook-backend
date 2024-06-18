@@ -5,9 +5,8 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import morgan from "morgan";
 import multer from "multer";
-import path from "path";
-import fs from "fs"; // To handle file system operations
 import pkg from "cloudinary";
+import streamifier from "streamifier"; // Import streamifier for stream conversion
 import { authRoute } from "./routes/auth.js";
 import { userRoute } from "./routes/users.js";
 import { postRoute } from "./routes/posts.js";
@@ -31,10 +30,6 @@ const DBConnection = async () => {
 
 DBConnection();
 
-// Static file serving
-const __dirname = path.resolve();
-app.use("/images", express.static(path.join(__dirname, "public/images")));
-
 // Middleware
 app.use(express.json());
 app.use(helmet());
@@ -50,53 +45,39 @@ app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: `dape61ufk`,
-  api_key: `672517736157678`,
-  api_secret: `GZO04yBEXAaqs5EjkdPzb37yT5Q`,
+  cloud_name: "dape61ufk",
+  api_key: "672517736157678",
+  api_secret: "GZO04yBEXAaqs5EjkdPzb37yT5Q",
 });
-
-// Multer storage configuration for local storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
+// Multer storage configuration for direct Cloudinary upload
+const storage = multer.memoryStorage(); // Use memory storage instead of disk storage
 
 const upload = multer({ storage: storage });
 
 // File upload endpoint
-app.post("/api/upload", upload.single("file"), async (req, res) => {
+app.post("/api/upload", upload.single("file"), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const filePath = path.join(__dirname, "public/images", req.file.filename);
-    console.log("File path:", filePath);
+    // Convert the buffer to a stream and upload to Cloudinary
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: "auto", folder: "images" },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          return res.status(500).json({ error: "File upload failed" });
+        }
 
-    // Check if file exists before uploading to Cloudinary
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: "File not found after upload" });
-    }
+        return res.status(200).json({
+          message: "File uploaded successfully",
+          url: result.secure_url,
+        });
+      }
+    );
 
-    const result = await cloudinary.uploader.upload(filePath, {
-      resource_type: "auto",
-      folder: "images",
-    });
-    console.log(result.url, "Cloudinary result:", result);
-
-    // Delete the file from local storage after uploading to Cloudinary
-    fs.unlink(filePath, (err) => {
-      if (err) console.error("Failed to delete local file:", err);
-    });
-
-    return res.status(200).json({
-      message: "File uploaded successfully",
-      url: result.secure_url,
-    });
+    streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
   } catch (error) {
     console.error("FILE UPLOAD ERROR", error);
     return res.status(500).json({ error: "File upload failed" });
