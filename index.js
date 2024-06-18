@@ -50,9 +50,9 @@ app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: `dape61ufk`,
+  api_key: `672517736157678`,
+  api_secret: `GZO04yBEXAaqs5EjkdPzb37yT5Q`,
 });
 
 // Multer storage configuration for local storage
