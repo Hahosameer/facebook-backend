@@ -13,6 +13,7 @@ const postSchema = new mongoose.Schema(
     },
     img: {
       type: String, // Corrected "string" to "String"
+      require: true
     },
     likes: {
       type: Array,
