@@ -35,19 +35,26 @@ app.use(express.json());
 app.use(helmet());
 app.use(morgan("common"));
 
-app.use(
-  cors({
-    origin: ["http://localhost:5173", "https://facebook-frontend.vercel.app"],
-  })
-);
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://facebook-frontend.vercel.app"
+  ],
+  credentials: true
+}));
 
 app.options("*", cors()); // Enable pre-flight requests for all routes
 
 // Cloudinary configuration
+// cloudinary.config({
+//   cloud_name: "dape61ufk",
+//   api_key: "672517736157678",
+//   api_secret: "GZO04yBEXAaqs5EjkdPzb37yT5Q",
+// });
 cloudinary.config({
-  cloud_name: "dape61ufk",
-  api_key: "672517736157678",
-  api_secret: "GZO04yBEXAaqs5EjkdPzb37yT5Q",
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 // Multer storage configuration for direct Cloudinary upload
 const storage = multer.memoryStorage(); // Use memory storage instead of disk storage
@@ -56,6 +63,7 @@ const upload = multer({ storage: storage });
 
 // File upload endpoint
 app.post("/api/upload", upload.single("file"), (req, res) => {
+   console.log("FILE RECEIVED:", req.file);
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
